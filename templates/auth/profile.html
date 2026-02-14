@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - AM AWUNI FURNITURE & CONSTRUCTION</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg scrolled">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('shop') }}">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('contact') }}">Contact</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item active" href="{{ url_for('auth.profile') }}"><i class="bi bi-person me-2"></i>Profile</a></li>
+                                {% if not current_user.is_admin %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.orders') }}"><i class="bi bi-bag-check me-2"></i>My Orders</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.wishlist') }}"><i class="bi bi-heart me-2"></i>Wishlist</a></li>
+                                {% endif %}
+                                {% if current_user.is_admin %}
+                                <li><a class="dropdown-item" href="/admin"><i class="bi bi-shield-lock me-2"></i>Admin Panel</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Profile Section -->
+    <section class="py-5 mt-5">
+        <div class="container">
+            <div class="row mt-5">
+                <!-- Sidebar -->
+                <div class="col-md-3 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-person-circle" style="font-size: 5rem; color: #f59e0b;"></i>
+                            </div>
+                            <h5 class="card-title">{{ current_user.full_name }}</h5>
+                            <p class="card-text text-muted small">{{ current_user.email }}</p>
+                            {% if current_user.is_admin %}
+                                <span class="badge bg-danger">Admin</span>
+                            {% elif current_user.is_staff %}
+                                <span class="badge bg-info">Staff</span>
+                            {% else %}
+                                <span class="badge bg-success">Customer</span>
+                            {% endif %}
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item active">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </li>
+                            <li class="list-group-item">
+                                <a href="{{ url_for('auth.orders') }}" class="text-decoration-none text-dark">
+                                    <i class="bi bi-bag-check me-2"></i>My Orders
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="{{ url_for('auth.wishlist') }}" class="text-decoration-none text-dark">
+                                    <i class="bi bi-heart me-2"></i>Wishlist
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="{{ url_for('auth.change_password') }}" class="text-decoration-none text-dark">
+                                    <i class="bi bi-key me-2"></i>Change Password
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="{{ url_for('auth.logout') }}" class="text-decoration-none text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="card-body">
+                            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger w-100">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-md-9">
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <div class="card">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="bi bi-person me-2"></i>Profile Information</h5>
+                            <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-pencil me-1"></i>Edit Profile
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted small mb-1">First Name</h6>
+                                    <p class="mb-0">{{ current_user.first_name or 'Not provided' }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted small mb-1">Last Name</h6>
+                                    <p class="mb-0">{{ current_user.last_name or 'Not provided' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted small mb-1">Username</h6>
+                                    <p class="mb-0">{{ current_user.username }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted small mb-1">Email</h6>
+                                    <p class="mb-0">{{ current_user.email }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted small mb-1">Phone</h6>
+                                    <p class="mb-0">{{ current_user.phone or 'Not provided' }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted small mb-1">Company</h6>
+                                    <p class="mb-0">{{ current_user.company or 'Not provided' }}</p>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <h6 class="mb-3"><i class="bi bi-geo-alt me-2"></i>Address Information</h6>
+                            
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <h6 class="text-muted small mb-1">Address Line 1</h6>
+                                    <p class="mb-0">{{ current_user.address_line1 or 'Not provided' }}</p>
+                                </div>
+                            </div>
+
+                            {% if current_user.address_line2 %}
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <h6 class="text-muted small mb-1">Address Line 2</h6>
+                                    <p class="mb-0">{{ current_user.address_line2 }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <h6 class="text-muted small mb-1">City</h6>
+                                    <p class="mb-0">{{ current_user.city or 'Not provided' }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="text-muted small mb-1">State/Province</h6>
+                                    <p class="mb-0">{{ current_user.state or 'Not provided' }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="text-muted small mb-1">Postal Code</h6>
+                                    <p class="mb-0">{{ current_user.postal_code or 'Not provided' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted small mb-1">Country</h6>
+                                    <p class="mb-0">{{ current_user.country or 'Not provided' }}</p>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <h6 class="mb-3"><i class="bi bi-info-circle me-2"></i>Account Details</h6>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="text-muted small mb-1">Member Since</h6>
+                                    <p class="mb-0">{{ current_user.created_at.strftime('%B %d, %Y') if current_user.created_at else 'N/A' }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="text-muted small mb-1">Last Login</h6>
+                                    <p class="mb-0">{{ current_user.last_login.strftime('%B %d, %Y at %I:%M %p') if current_user.last_login else 'N/A' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="text-muted small mb-1">Account Status</h6>
+                                    <p class="mb-0">
+                                        {% if current_user.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="text-muted small mb-1">Email Verified</h6>
+                                    <p class="mb-0">
+                                        {% if current_user.is_verified %}
+                                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Verified</span>
+                                        {% else %}
+                                            <span class="badge bg-warning"><i class="bi bi-exclamation-circle me-1"></i>Not Verified</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light mt-5">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3 class="h5 mb-3">
+                        <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                    </h3>
+                    <p class="small">Manufacturing quality furniture and providing affordable construction services with eco-friendly materials and flexible payment terms.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="small mb-0">&copy; <span id="currentYear"></span> AM AWUNI FURNITURE & CONSTRUCTION. All Rights Reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Back to Top -->
+    <script src="{{ url_for('static', filename='js/back-to-top.js') }}"></script>
+    
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

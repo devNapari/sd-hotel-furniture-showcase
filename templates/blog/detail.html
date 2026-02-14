@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.meta_title or post.title }} - AM AWUNI FURNITURE & CONSTRUCTION Blog</title>
+    <meta name="description" content="{{ post.meta_description or post.excerpt or post.content[:150] }}">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    
+    <style>
+        .blog-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .blog-content h2, .blog-content h3 {
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .blog-content p {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg scrolled">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('shop') }}">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="{{ url_for('blog.index') }}">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('contact') }}">Contact</a></li>
+                        
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="bi bi-person"></i> Profile</a></li>
+                                {% if not current_user.is_admin %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.orders') }}"><i class="bi bi-bag-check"></i> My Orders</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.wishlist') }}"><i class="bi bi-heart"></i> Wishlist</a></li>
+                                {% endif %}
+                                {% if current_user.is_admin %}
+                                <li><a class="dropdown-item" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Sign Up</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Article Content -->
+    <article class="py-5 mt-5">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mt-5">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('blog.index') }}">Blog</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
+                </ol>
+            </nav>
+
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <!-- Article Header -->
+                    <div class="mb-4">
+                        <span class="badge bg-amber text-dark mb-3">{{ post.category|title }}</span>
+                        <h1 class="display-5 fw-bold mb-3">{{ post.title }}</h1>
+                        
+                        <div class="d-flex flex-wrap gap-3 text-muted mb-4">
+                            <span><i class="bi bi-person"></i> {{ post.author.full_name }}</span>
+                            <span><i class="bi bi-calendar"></i> {{ post.published_at.strftime('%B %d, %Y') if post.published_at else 'N/A' }}</span>
+                            <span><i class="bi bi-clock"></i> {{ post.reading_time }} min read</span>
+                            <span><i class="bi bi-eye"></i> {{ post.views }} views</span>
+                        </div>
+
+                        {% if post.tags %}
+                        <div class="mb-4">
+                            {% for tag in post.tag_list %}
+                            <span class="badge bg-secondary me-1">#{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Featured Image -->
+                    {% if post.featured_image %}
+                    <img src="{{ post.featured_image }}" alt="{{ post.title }}" class="img-fluid rounded shadow-lg mb-4" style="width: 100%; height: 400px; object-fit: cover;">
+                    {% endif %}
+
+                    <!-- Article Content -->
+                    <div class="blog-content mb-5">
+                        {{ post.content|safe }}
+                    </div>
+
+                    <!-- Share Buttons -->
+                    <div class="card border-0 bg-light mb-5">
+                        <div class="card-body">
+                            <h6 class="mb-3">Share this article:</h6>
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-facebook"></i> Facebook
+                                </a>
+                                <a href="#" class="btn btn-outline-info btn-sm">
+                                    <i class="bi bi-twitter"></i> Twitter
+                                </a>
+                                <a href="#" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-linkedin"></i> LinkedIn
+                                </a>
+                                <a href="#" class="btn btn-outline-success btn-sm">
+                                    <i class="bi bi-whatsapp"></i> WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Author Bio -->
+                    <div class="card border-0 shadow-sm mb-5">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-amber rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <span class="fw-bold text-white fs-3">{{ post.author.first_name[0] if post.author.first_name else post.author.username[0] }}</span>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h5 class="mb-1">{{ post.author.full_name }}</h5>
+                                    <p class="text-muted mb-0">{{ post.author.company or 'Content Writer' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="mb-5">
+                        <h4 class="mb-4">Comments ({{ comments|length }})</h4>
+
+                        <!-- Comment Form -->
+                        {% if current_user.is_authenticated %}
+                        <div class="card border-0 shadow-sm mb-4">
+                            <div class="card-body">
+                                <h6 class="mb-3">Leave a Comment</h6>
+                                {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                        {% for category, message in messages %}
+                                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                                {{ message }}
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+                                <form method="POST" action="{{ url_for('blog.add_comment', slug=post.slug) }}">
+                                    <div class="mb-3">
+                                        <textarea name="content" class="form-control" rows="4" placeholder="Share your thoughts..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-send"></i> Post Comment
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Please <a href="{{ url_for('auth.login') }}">login</a> to leave a comment.
+                        </div>
+                        {% endif %}
+
+                        <!-- Comments List -->
+                        {% if comments %}
+                        <div class="comments-list">
+                            {% for comment in comments %}
+                            <div class="card border-0 shadow-sm mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-shrink-0">
+                                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                <span class="fw-bold text-white">{{ comment.user.username[0]|upper }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="mb-1">{{ comment.user.full_name }}</h6>
+                                            <small class="text-muted">{{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                                            <p class="mt-2 mb-0">{{ comment.content }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No comments yet. Be the first to comment!</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Related Posts -->
+                    {% if related_posts %}
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h6 class="mb-0"><i class="bi bi-collection me-2"></i>Related Articles</h6>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for related in related_posts %}
+                            <a href="{{ url_for('blog.detail', slug=related.slug) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1 small">{{ related.title }}</h6>
+                                </div>
+                                <small class="text-muted">{{ related.published_at.strftime('%b %d, %Y') if related.published_at else 'N/A' }}</small>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Back to Blog -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <a href="{{ url_for('blog.index') }}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-arrow-left"></i> Back to Blog
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <h3 class="h5 mb-3">
+                        <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                    </h3>
+                    <p class="small">Manufacturing quality furniture and providing affordable construction services with eco-friendly materials and flexible payment terms.</p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Quick Links</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{{ url_for('about') }}" class="text-light text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="{{ url_for('projects') }}" class="text-light text-decoration-none">Projects</a></li>
+                        <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Categories</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Sofa Sets</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Dining Tables</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Room Decorations</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Construction Services</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Contact Us</h4>
+                    <p class="small mb-1">Tuutingli, Second Ring Road</p>
+                    <p class="small mb-1">Near Dabokpa Technical Institute, Tamale</p>
+                    <p class="small mb-1">+233 538 833 723</p>
+                    <p class="small">amfurnitureandconstruction@gmail.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-black py-3">
+            <div class="container text-center">
+                <p class="small text-muted mb-0">&copy; <span id="currentYear"></span> AM AWUNI FURNITURE & CONSTRUCTION. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Back to Top -->
+    <script src="{{ url_for('static', filename='js/back-to-top.js') }}"></script>
+    
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

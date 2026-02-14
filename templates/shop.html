@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - AM AWUNI FURNITURE & CONSTRUCTION</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg scrolled">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="{{ url_for('shop') }}">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('blog.index') }}">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('contact') }}">Contact</a></li>
+                        
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="bi bi-person"></i> Profile</a></li>
+                                {% if not current_user.is_admin %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.orders') }}"><i class="bi bi-bag-check"></i> My Orders</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.wishlist') }}"><i class="bi bi-heart"></i> Wishlist</a></li>
+                                {% endif %}
+                                {% if current_user.is_admin %}
+                                <li><a class="dropdown-item" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Sign Up</a></li>
+                        {% endif %}
+                    </ul>
+                    <button class="btn btn-link position-relative ms-2" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+                        <i class="bi bi-cart3 fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-amber" id="cartCount">0</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header bg-dark text-white py-5 mt-5">
+        <div class="container text-center py-5">
+            <h1 class="display-4 fw-bold mb-3">Shop Our Collection</h1>
+            <p class="lead">Browse and purchase premium hotel furniture</p>
+        </div>
+    </section>
+
+    <!-- Shop Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Filters Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Filters</h5>
+                            
+                            <!-- Category Filter -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Category</h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" value="all" id="catAll" checked>
+                                    <label class="form-check-label" for="catAll">All Products</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input category-filter" type="checkbox" value="guest-room" id="catGuest">
+                                    <label class="form-check-label" for="catGuest">Sofa Sets</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input category-filter" type="checkbox" value="lobby" id="catLobby">
+                                    <label class="form-check-label" for="catLobby">Lobby</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input category-filter" type="checkbox" value="restaurant" id="catRestaurant">
+                                    <label class="form-check-label" for="catRestaurant">Restaurant</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input category-filter" type="checkbox" value="outdoor" id="catOutdoor">
+                                    <label class="form-check-label" for="catOutdoor">Outdoor</label>
+                                </div>
+                            </div>
+
+                            <!-- Price Range -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Price Range</h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input price-filter" type="checkbox" value="0-500" id="price1">
+                                    <label class="form-check-label" for="price1">Under $500</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input price-filter" type="checkbox" value="500-1000" id="price2">
+                                    <label class="form-check-label" for="price2">$500 - $1,000</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input price-filter" type="checkbox" value="1000-2000" id="price3">
+                                    <label class="form-check-label" for="price3">$1,000 - $2,000</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input price-filter" type="checkbox" value="2000-5000" id="price4">
+                                    <label class="form-check-label" for="price4">$2,000 - $5,000</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input price-filter" type="checkbox" value="5000-99999" id="price5">
+                                    <label class="form-check-label" for="price5">Over $5,000</label>
+                                </div>
+                            </div>
+
+                            <!-- Sort By -->
+                            <div class="mb-3">
+                                <h6 class="fw-bold mb-3">Sort By</h6>
+                                <select class="form-select" id="sortBy">
+                                    <option value="featured">Featured</option>
+                                    <option value="price-low">Price: Low to High</option>
+                                    <option value="price-high">Price: High to Low</option>
+                                    <option value="name">Name: A to Z</option>
+                                </select>
+                            </div>
+
+                            <button class="btn btn-outline-secondary w-100" id="clearFilters">Clear Filters</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="col-lg-9">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <p class="text-muted mb-0"><span id="productCount">0</span> products found</p>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-secondary active" id="gridView">
+                                <i class="bi bi-grid-3x3-gap"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="listView">
+                                <i class="bi bi-list"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row g-4" id="productsContainer">
+                        <!-- Products will be inserted here by JavaScript -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav aria-label="Product pagination" class="mt-5">
+                        <ul class="pagination justify-content-center" id="pagination">
+                            <!-- Pagination will be inserted here -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title">Shopping Cart</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="cartItems">
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-cart3 fs-1 d-block mb-3"></i>
+                    <p>Your cart is empty</p>
+                </div>
+            </div>
+        </div>
+        <div class="offcanvas-footer border-top p-3">
+            <div class="d-flex justify-content-between mb-3">
+                <strong>Total:</strong>
+                <strong id="cartTotal">$0.00</strong>
+            </div>
+            <button class="btn btn-primary w-100 mb-2" id="bookConsultationBtn" data-bs-toggle="modal" data-bs-target="#consultationModal" data-bs-dismiss="offcanvas">
+                <i class="bi bi-calendar-check me-2"></i>Book Consultation
+            </button>
+            <button class="btn btn-outline-secondary w-100" data-bs-dismiss="offcanvas">Continue Shopping</button>
+        </div>
+    </div>
+
+    <!-- Product Quick View Modal -->
+    <div class="modal fade" id="quickViewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="quickViewContent">
+                    <!-- Quick view content will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Consultation Modal -->
+    <div class="modal fade" id="consultationModal" tabindex="-1" aria-labelledby="consultationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="consultationModalLabel">
+                        <i class="bi bi-calendar-check text-primary me-2"></i>Book a Consultation
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-4">Fill out the form below and our team will get back to you within 24 hours to discuss your furniture needs.</p>
+                    
+                    <form id="consultationForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="consultFirstName" class="form-label">First Name *</label>
+                                <input type="text" class="form-control" id="consultFirstName" name="firstName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="consultLastName" class="form-label">Last Name *</label>
+                                <input type="text" class="form-control" id="consultLastName" name="lastName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="consultEmail" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="consultEmail" name="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="consultPhone" class="form-label">Phone Number *</label>
+                                <input type="tel" class="form-control" id="consultPhone" name="phone" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="consultCompany" class="form-label">Company/Organization Name</label>
+                                <input type="text" class="form-control" id="consultCompany" name="company">
+                            </div>
+                            <div class="col-12">
+                                <label for="consultSubject" class="form-label">Subject *</label>
+                                <select class="form-select" id="consultSubject" name="subject" required>
+                                    <option value="">Select a subject</option>
+                                    <option value="furniture">Furniture Inquiry</option>
+                                    <option value="construction">Construction Project</option>
+                                    <option value="quote">Request a Quote</option>
+                                    <option value="custom">Custom Design</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="consultDate" class="form-label">Preferred Date *</label>
+                                <input type="date" class="form-control" id="consultDate" name="preferredDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="consultTime" class="form-label">Preferred Time *</label>
+                                <input type="time" class="form-control" id="consultTime" name="preferredTime" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="consultMessage" class="form-label">Message *</label>
+                                <textarea class="form-control" id="consultMessage" name="message" rows="5" required placeholder="Tell us about your project or requirements..."></textarea>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="consultNewsletter" name="newsletter">
+                                    <label class="form-check-label" for="consultNewsletter">
+                                        Subscribe to our newsletter for updates and special offers
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <div id="consultationMessage" class="mt-3"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitConsultation">
+                        <i class="bi bi-send me-2"></i>Send Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact-footer" class="bg-dark text-light">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <h3 class="h5 mb-3">
+                        <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                    </h3>
+                    <p class="small">Manufacturing quality furniture and providing affordable construction services with eco-friendly materials and flexible payment terms.</p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Quick Links</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{{ url_for('about') }}" class="text-light text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="{{ url_for('shop') }}" class="text-light text-decoration-none">Shop</a></li>
+                        <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Categories</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Sofa Sets</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Dining Tables</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Room Decorations</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Construction Services</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Contact Us</h4>
+                    <p class="small mb-1">Tuutingli, Second Ring Road</p>
+                    <p class="small mb-1">Near Dabokpa Technical Institute, Tamale</p>
+                    <p class="small mb-1">+233 538 833 723</p>
+                    <p class="small">amfurnitureandconstruction@gmail.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-black py-3">
+            <div class="container text-center">
+                <p class="small text-muted mb-0">&copy; <span id="currentYear"></span> AM AWUNI FURNITURE & CONSTRUCTION. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Shop Data -->
+    <script src="{{ url_for('static', filename='js/shop-data.js') }}"></script>
+    
+    <!-- Shop Script -->
+    <script src="{{ url_for('static', filename='js/shop.js') }}"></script>
+    
+    <!-- Consultation Form Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const consultationForm = document.getElementById('consultationForm');
+            const submitBtn = document.getElementById('submitConsultation');
+            const messageDiv = document.getElementById('consultationMessage');
+            const modal = document.getElementById('consultationModal');
+            const dateInput = document.getElementById('consultDate');
+            const timeInput = document.getElementById('consultTime');
+            
+            // Set minimum date to today
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const minDate = tomorrow.toISOString().split('T')[0];
+            dateInput.min = minDate;
+            
+            // Set minimum time (next hour from current time)
+            const now = new Date();
+            const minTime = new Date(now.getTime() + 60 * 60 * 1000); // Add 1 hour
+            const hours = String(minTime.getHours()).padStart(2, '0');
+            const minutes = String(minTime.getMinutes()).padStart(2, '0');
+            timeInput.min = `${hours}:${minutes}`;
+            
+            // Update minimum time when date changes
+            dateInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                const today = new Date();
+                
+                if (selectedDate.toDateString() === today.toDateString()) {
+                    // If selecting today, set min time to next hour
+                    const now = new Date();
+                    const minTime = new Date(now.getTime() + 60 * 60 * 1000);
+                    const hours = String(minTime.getHours()).padStart(2, '0');
+                    const minutes = String(minTime.getMinutes()).padStart(2, '0');
+                    timeInput.min = `${hours}:${minutes}`;
+                } else {
+                    // For future dates, allow any time
+                    timeInput.min = '08:00'; // Business hours start
+                }
+            });
+            
+            submitBtn.addEventListener('click', async function() {
+                // Validate form
+                if (!consultationForm.checkValidity()) {
+                    consultationForm.reportValidity();
+                    return;
+                }
+                
+                // Additional date/time validation
+                const preferredDate = document.getElementById('consultDate').value;
+                const preferredTime = document.getElementById('consultTime').value;
+                
+                if (preferredDate && preferredTime) {
+                    const selectedDateTime = new Date(preferredDate + 'T' + preferredTime);
+                    const now = new Date();
+                    
+                    if (selectedDateTime <= now) {
+                        alert('Please select a future date and time for your consultation.');
+                        return;
+                    }
+                }
+                
+                // Show loading state
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+
+                try {
+                    // Get form data
+                    const formData = new FormData(consultationForm);
+                    const data = Object.fromEntries(formData.entries());
+
+                    // Add cart items to the form data for email
+                    const cartJSON = localStorage.getItem('hotelFurnitureCart');
+                    console.log('[CONSULTATION] localStorage.getItem("hotelFurnitureCart"):', cartJSON);
+
+                    const cartItems = JSON.parse(cartJSON || '[]');
+                    console.log('[CONSULTATION] Parsed cart items:', cartItems);
+                    console.log('[CONSULTATION] Cart length:', cartItems.length);
+
+                    // Always include cartItems, even if empty, for debugging
+                    data.cartItems = cartItems;
+                    console.log('[CONSULTATION] Cart items added to data (even if empty)');
+                    if (cartItems.length > 0) {
+                        console.log('[CONSULTATION] ✓ Cart has items');
+                        console.log('[CONSULTATION] First item details:', {
+                            id: cartItems[0].id,
+                            name: cartItems[0].name,
+                            price: cartItems[0].price,
+                            image: cartItems[0].image,
+                            quantity: cartItems[0].quantity
+                        });
+                    } else {
+                        console.log('[CONSULTATION] ✗ Cart is empty');
+                    }
+                    console.log('[CONSULTATION] Full form data being sent:', data);
+                    const response = await fetch('/api/consultation', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    console.log('[CONSULTATION] Fetch request body:', JSON.stringify(data));
+                    console.log('[CONSULTATION] Fetch completed, status:', response.status);
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        // Show success message
+                        messageDiv.innerHTML = `
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <strong>Success!</strong> Your consultation request has been sent. We'll contact you within 24 hours!
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        `;
+                        
+                        // Reset form
+                        consultationForm.reset();
+                        
+                        // Close modal after 3 seconds
+                        setTimeout(() => {
+                            bootstrap.Modal.getInstance(modal).hide();
+                            messageDiv.innerHTML = '';
+                        }, 3000);
+                    } else {
+                        throw new Error(result.message || 'Failed to send consultation request');
+                    }
+                } catch (error) {
+                    // Show error message
+                    messageDiv.innerHTML = `
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Error!</strong> ${error.message}. Please try again or contact us directly.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    `;
+                } finally {
+                    // Reset button
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            });
+            
+            // Clear message when modal is closed
+            modal.addEventListener('hidden.bs.modal', function() {
+                messageDiv.innerHTML = '';
+            });
+        });
+    </script>
+    
+    <!-- Back to Top -->
+    <script src="{{ url_for('static', filename='js/back-to-top.js') }}"></script>
+</body>
+</html>

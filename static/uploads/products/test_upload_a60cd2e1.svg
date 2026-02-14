@@ -1,0 +1,40 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <!-- White background -->
+  <rect width="400" height="400" fill="white"/>
+  
+  <!-- Head -->
+  <circle cx="200" cy="100" r="35" fill="#d4a574"/>
+  
+  <!-- Hair -->
+  <path d="M 165 100 A 35 35 0 0 1 235 100 L 235 110 A 35 35 0 0 1 165 110 Z" fill="#2c2416"/>
+  
+  <!-- Body -->
+  <rect x="175" y="140" width="50" height="60" rx="5" fill="#4a90e2"/>
+  
+  <!-- Arms -->
+  <rect x="130" y="145" width="45" height="20" rx="10" fill="#d4a574"/>
+  <rect x="225" y="145" width="45" height="20" rx="10" fill="#d4a574"/>
+  
+  <!-- Legs -->
+  <rect x="180" y="205" width="15" height="80" rx="7" fill="#3a3a3a"/>
+  <rect x="205" y="205" width="15" height="80" rx="7" fill="#3a3a3a"/>
+  
+  <!-- Shoes -->
+  <ellipse cx="187.5" cy="290" rx="12" ry="8" fill="#1a1a1a"/>
+  <ellipse cx="212.5" cy="290" rx="12" ry="8" fill="#1a1a1a"/>
+  
+  <!-- Eyes -->
+  <circle cx="190" cy="95" r="3" fill="black"/>
+  <circle cx="210" cy="95" r="3" fill="black"/>
+  
+  <!-- Mouth -->
+  <path d="M 195 105 Q 200 108 205 105" stroke="black" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Text -->
+  <text x="200" y="330" font-family="Arial, sans-serif" font-size="18" fill="#999" text-anchor="middle">
+    No Image
+  </text>
+  <text x="200" y="355" font-family="Arial, sans-serif" font-size="14" fill="#ccc" text-anchor="middle">
+    Available
+  </text>
+</svg>

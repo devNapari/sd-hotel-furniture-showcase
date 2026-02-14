@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist - AM AWUNI FURNITURE & CONSTRUCTION</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg scrolled">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('shop') }}">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('contact') }}">Contact</a></li>
+                        
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="bi bi-person"></i> Profile</a></li>
+                                {% if not current_user.is_admin %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.orders') }}"><i class="bi bi-bag-check"></i> My Orders</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.wishlist') }}"><i class="bi bi-heart"></i> Wishlist</a></li>
+                                {% endif %}
+                                {% if current_user.is_admin %}
+                                <li><a class="dropdown-item" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Sign Up</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header bg-dark text-white py-5 mt-5">
+        <div class="container text-center py-5">
+            <h1 class="display-4 fw-bold mb-3">My Wishlist</h1>
+            <p class="lead">Your saved favorite products</p>
+        </div>
+    </section>
+
+    <!-- Wishlist Section -->
+    <section class="py-5">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if wishlist_items %}
+                <div class="row g-4">
+                    {% for item in wishlist_items %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            {% if item.product %}
+                                {% if item.product.main_image %}
+                                <img src="{{ item.product.main_image }}"
+                                     class="card-img-top"
+                                     alt="{{ item.product.name }}"
+                                     style="height: 250px; object-fit: cover;">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ item.product.name }}</h5>
+                                    <p class="card-text text-muted small">{{ item.product.description[:100] }}...</p>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="h5 mb-0 text-primary">${{ '%.2f'|format(item.product.price) }}</span>
+                                        {% if item.product.stock > 0 %}
+                                            <span class="badge bg-success">In Stock</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Out of Stock</span>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted d-block mb-3">
+                                        <i class="bi bi-calendar"></i> Added {{ item.created_at.strftime('%B %d, %Y') }}
+                                    </small>
+                                </div>
+                                <div class="card-footer bg-white border-top-0">
+                                    <div class="d-grid gap-2">
+                                        {% if item.product.stock > 0 %}
+                                            <button class="btn btn-primary btn-sm" onclick="addToCart({{ item.product.id }})">
+                                                <i class="bi bi-cart-plus"></i> Add to Cart
+                                            </button>
+                                        {% endif %}
+                                        <form method="POST" action="{{ url_for('auth.delete_wishlist_item', wishlist_id=item.id) }}" class="d-inline" onsubmit="return confirm('Remove this item from your wishlist?');">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                                <i class="bi bi-trash"></i> Remove
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="card-body">
+                                    <p class="text-muted">Product no longer available</p>
+                                    <form method="POST" action="{{ url_for('auth.delete_wishlist_item', wishlist_id=item.id) }}">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-trash"></i> Remove
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Summary -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h5 class="mb-2">Wishlist Summary</h5>
+                                        <p class="text-muted mb-0">You have {{ wishlist_items|length }} item(s) in your wishlist</p>
+                                    </div>
+                                    <div class="col-md-4 text-md-end">
+                                        <a href="{{ url_for('shop') }}" class="btn btn-primary">
+                                            <i class="bi bi-shop"></i> Continue Shopping
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-heart display-1 text-muted"></i>
+                    <h3 class="mt-4">Your Wishlist is Empty</h3>
+                    <p class="text-muted">Start adding products you love to your wishlist!</p>
+                    <a href="{{ url_for('shop') }}" class="btn btn-primary mt-3">Browse Products</a>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <h3 class="h5 mb-3">
+                        <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                    </h3>
+                    <p class="small">Manufacturing quality furniture and providing affordable construction services with eco-friendly materials and flexible payment terms.</p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Quick Links</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{{ url_for('about') }}" class="text-light text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="{{ url_for('projects') }}" class="text-light text-decoration-none">Projects</a></li>
+                        <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Categories</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Sofa Sets</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Dining Tables</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Room Decorations</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Construction Services</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Contact Us</h4>
+                    <p class="small mb-1">Tuutingli, Second Ring Road</p>
+                    <p class="small mb-1">Near Dabokpa Technical Institute, Tamale</p>
+                    <p class="small mb-1">+233 538 833 723</p>
+                    <p class="small">amfurnitureandconstruction@gmail.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-black py-3">
+            <div class="container text-center">
+                <p class="small text-muted mb-0">&copy; <span id="currentYear"></span> AM AWUNI FURNITURE & CONSTRUCTION. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        function addToCart(productId) {
+            // This would integrate with your shopping cart system
+            alert('Add to cart functionality - Product ID: ' + productId);
+            // You can implement actual cart functionality here
+        }
+    </script>
+    
+    <!-- Back to Top -->
+    <script src="{{ url_for('static', filename='js/back-to-top.js') }}"></script>
+</body>
+</html>

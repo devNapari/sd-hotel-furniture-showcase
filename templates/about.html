@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - AM AWUNI FURNITURE & CONSTRUCTION</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg scrolled">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('shop') }}">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('blog.index') }}">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="{{ url_for('about') }}">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('contact') }}">Contact</a></li>
+                        
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="bi bi-person"></i> Profile</a></li>
+                                {% if not current_user.is_admin %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.orders') }}"><i class="bi bi-bag-check"></i> My Orders</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.wishlist') }}"><i class="bi bi-heart"></i> Wishlist</a></li>
+                                {% endif %}
+                                {% if current_user.is_admin %}
+                                <li><a class="dropdown-item" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Sign Up</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header bg-dark text-white py-5 mt-5">
+        <div class="container text-center py-5">
+            <h1 class="display-4 fw-bold mb-3">About AM AWUNI FURNITURE & CONSTRUCTION</h1>
+            <p class="lead">Crafting excellence in hospitality furniture for over two decades</p>
+        </div>
+    </section>
+
+    <!-- Company Story -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <img src="/static/images/000231.jpg" alt="Hotel Lobby Furniture" class="img-fluid rounded shadow-lg">
+                </div>
+                <div class="col-lg-6">
+                    <h6 class="text-uppercase fw-bold text-amber mb-2">Our Story</h6>
+                    <h2 class="display-5 fw-bold mb-4">Your Vision, Our Craftsmanship</h2>
+                    <p class="text-muted mb-3">
+                        For over two decades, AM AWUNI FURNITURE & CONSTRUCTION has been a trusted partner for hoteliers and designers worldwide. We specialize in creating high-quality, custom-made furniture that not only meets the aesthetic and functional needs of the hospitality industry but also tells a story.
+                    </p>
+                    <p class="text-muted">
+                        Our commitment to excellence is reflected in every piece we create, from elegant guest room furnishings to stunning public area installations. We believe in building lasting relationships with our clients through collaboration, innovation, and unwavering dedication to quality.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body p-5">
+                            <div class="mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5"></path>
+                                    <path d="M2 12l10 5 10-5"></path>
+                                </svg>
+                            </div>
+                            <h3 class="h4 fw-bold mb-3">Our Mission</h3>
+                            <p class="text-muted mb-0">To deliver exceptional, custom-designed furniture solutions that enhance the hospitality experience, combining timeless elegance with modern functionality. We strive to exceed our clients' expectations through superior craftsmanship, innovative design, and dedicated service.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow h-100">
+                        <div class="card-body p-5">
+                            <div class="mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                            <h3 class="h4 fw-bold mb-3">Our Vision</h3>
+                            <p class="text-muted mb-0">To be the world's leading provider of hospitality furniture, recognized for our commitment to quality, sustainability, and innovation. We envision a future where every hotel space we furnish becomes a testament to exceptional design and enduring craftsmanship.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h6 class="text-uppercase fw-bold text-amber mb-2">Our Advantages</h6>
+                <h2 class="display-5 fw-bold">Why Choose Us</h2>
+            </div>
+            <div class="row g-4" id="valuePropositions">
+                <!-- Value propositions will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Process -->
+    <section class="py-5 bg-dark text-white">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h6 class="text-uppercase fw-bold text-amber mb-2">How We Work</h6>
+                <h2 class="display-5 fw-bold">Our Streamlined Process</h2>
+            </div>
+            <div class="row g-4" id="processSteps">
+                <!-- Process steps will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Company Values -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Our Core Values</h2>
+                <p class="text-muted">The principles that guide everything we do</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div class="mb-3">
+                            <div class="bg-amber rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5"></path>
+                                    <path d="M2 12l10 5 10-5"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4 class="h5 fw-bold mb-3">Excellence</h4>
+                        <p class="text-muted">We pursue excellence in every aspect of our work, from design to delivery, ensuring the highest standards of quality.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div class="mb-3">
+                            <div class="bg-amber rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4 class="h5 fw-bold mb-3">Collaboration</h4>
+                        <p class="text-muted">We work closely with our clients, understanding their needs and vision to create furniture that exceeds expectations.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div class="mb-3">
+                            <div class="bg-amber rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4 class="h5 fw-bold mb-3">Integrity</h4>
+                        <p class="text-muted">We conduct our business with honesty and transparency, building trust through reliable service and ethical practices.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div class="mb-3">
+                            <div class="bg-amber rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4 class="h5 fw-bold mb-3">Innovation</h4>
+                        <p class="text-muted">We embrace new technologies and design trends while respecting timeless craftsmanship traditions.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div class="mb-3">
+                            <div class="bg-amber rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4 class="h5 fw-bold mb-3">Sustainability</h4>
+                        <p class="text-muted">We are committed to environmentally responsible practices, using sustainable materials and eco-friendly processes.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center p-4">
+                        <div class="mb-3">
+                            <div class="bg-amber rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4 class="h5 fw-bold mb-3">Passion</h4>
+                        <p class="text-muted">Our team is passionate about creating beautiful, functional furniture that enhances the hospitality experience.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Client Logos -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h3 class="text-center text-muted mb-5">Trusted by the Industry's Best</h3>
+            <div class="d-flex flex-wrap justify-content-center align-items-center gap-4" id="clientLogos">
+                <!-- Client logos will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-5 bg-dark text-white">
+        <div class="container text-center">
+            <h2 class="display-5 fw-bold mb-3">Let's Work Together</h2>
+            <p class="lead mb-4">Ready to bring your vision to life?</p>
+            <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg">Contact Us Today</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact-footer" class="bg-dark text-light">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <h3 class="h5 mb-3">
+                        <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                    </h3>
+                    <p class="small">Manufacturing quality furniture and providing affordable construction services with eco-friendly materials and flexible payment terms.</p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Quick Links</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{{ url_for('about') }}" class="text-light text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="{{ url_for('projects') }}" class="text-light text-decoration-none">Projects</a></li>
+                        <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Categories</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Sofa Sets</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Dining Tables</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Room Decorations</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Construction Services</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Contact Us</h4>
+                    <p class="small mb-1">Tuutingli, Second Ring Road</p>
+                    <p class="small mb-1">Near Dabokpa Technical Institute, Tamale</p>
+                    <p class="small mb-1">+233 538 833 723</p>
+                    <p class="small">amfurnitureandconstruction@gmail.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-black py-3">
+            <div class="container text-center">
+                <p class="small text-muted mb-0">&copy; <span id="currentYear"></span> AM AWUNI FURNITURE & CONSTRUCTION. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Data -->
+    <script src="{{ url_for('static', filename='js/data.js') }}"></script>
+    
+    <!-- Back to Top -->
+    <script src="{{ url_for('static', filename='js/back-to-top.js') }}"></script>
+    
+    <!-- Page specific script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            renderValuePropositions();
+            renderProcessSteps();
+            renderClientLogos();
+            setCurrentYear();
+        });
+
+        function renderValuePropositions() {
+            const container = document.getElementById('valuePropositions');
+            
+            VALUE_PROPOSITIONS.forEach(prop => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4';
+                
+                col.innerHTML = `
+                    <div class="value-card p-4 border rounded h-100 text-center">
+                        <div class="mb-3">
+                            ${prop.icon}
+                        </div>
+                        <h4 class="h5 fw-semibold mb-3">${prop.title}</h4>
+                        <p class="text-muted">${prop.description}</p>
+                    </div>
+                `;
+                
+                container.appendChild(col);
+            });
+        }
+
+        function renderProcessSteps() {
+            const container = document.getElementById('processSteps');
+            
+            OUR_PROCESS_STEPS.forEach(step => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-3';
+                
+                col.innerHTML = `
+                    <div class="process-card position-relative bg-secondary p-4 rounded shadow h-100">
+                        <div class="process-number position-absolute bg-amber text-white rounded-circle d-flex align-items-center justify-content-center fw-bold">
+                            ${step.step}
+                        </div>
+                        <h4 class="h5 fw-semibold mb-3 mt-4">${step.title}</h4>
+                        <p class="text-light small">${step.description}</p>
+                    </div>
+                `;
+                
+                container.appendChild(col);
+            });
+        }
+
+        function renderClientLogos() {
+            const container = document.getElementById('clientLogos');
+            
+            CLIENT_LOGOS.forEach((logoUrl, index) => {
+                const logoDiv = document.createElement('div');
+                logoDiv.className = 'client-logo';
+                
+                logoDiv.innerHTML = `
+                    <img src="${logoUrl}" alt="Client Logo ${index + 1}" class="img-fluid">
+                `;
+                
+                container.appendChild(logoDiv);
+            });
+        }
+
+        function setCurrentYear() {
+            const yearElement = document.getElementById('currentYear');
+            if (yearElement) {
+                yearElement.textContent = new Date().getFullYear();
+            }
+        }
+    </script>
+</body>
+</html>

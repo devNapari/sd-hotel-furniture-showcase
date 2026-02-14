@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AM AWUNI FURNITURE & CONSTRUCTION</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <span class="brand-am">AM AWUNI</span><br>
+                    <span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('shop') }}">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('blog.index') }}">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('contact') }}">Contact</a></li>
+                        
+                        {% if current_user.is_authenticated %}
+                        <!-- Logged in user menu -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="bi bi-person me-2"></i>Profile</a></li>
+                                {% if not current_user.is_admin %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.orders') }}"><i class="bi bi-bag-check me-2"></i>My Orders</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.wishlist') }}"><i class="bi bi-heart me-2"></i>Wishlist</a></li>
+                                {% endif %}
+                                {% if current_user.is_admin %}
+                                <li><a class="dropdown-item" href="/admin"><i class="bi bi-shield-lock me-2"></i>Admin Panel</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <!-- Not logged in -->
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}"><i class="bi bi-box-arrow-in-right me-1"></i>Login</a></li>
+                        <li class="nav-item"><a class="nav-link btn btn-primary text-white ms-2" href="{{ url_for('auth.register') }}">Sign Up</a></li>
+                        {% endif %}
+                    </ul>
+                    <button class="btn btn-link search-btn d-none d-lg-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Quality <span class="text-amber">Furniture</span> & Affordable <span class="text-amber">Construction</span></h1>
+            <p class="hero-subtitle">We manufacture and sale furniture of all types while providing affordable construction alternatives. Eco-friendly materials with flexible payment terms.</p>
+            <a href="#projects" class="btn btn-primary btn-lg">View Our Work</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-5 bg-light">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-md-6">
+                    <img src="/static/images/000231.jpg" alt="Hotel Lobby Furniture" class="img-fluid rounded shadow-lg">
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-uppercase fw-bold text-amber mb-2">About Our Company</h6>
+                    <h2 class="display-5 fw-bold mb-4">Quality Furniture & Affordable Construction</h2>
+                    <p class="text-muted mb-3">
+                        AM AWUNI FURNITURE & CONSTRUCTION specializes in manufacturing and selling furniture of all types including sofa sets, dining tables, complete room decorations, and kitchen setups. We also provide affordable construction services for homes, offices, schools, and roads.
+                    </p>
+                    <p class="text-muted">
+                        Located in Tamale, Tuutingli on the Second Ring Road near Dabokpa Technical Institute, we serve customers both locally and nationally with plans to extend internationally within five years. What makes us unique is our use of eco-friendly materials, combining both local and foreign materials, while providing flexible payment terms.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Categories -->
+    <section id="products" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h6 class="text-uppercase fw-bold text-amber mb-2">Our Collection</h6>
+                <h2 class="display-5 fw-bold">Explore Our Products</h2>
+            </div>
+            <div class="row g-4" id="productCategories">
+                <!-- Categories will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Projects -->
+    <section id="projects" class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h6 class="text-uppercase fw-bold text-amber mb-2">Our Portfolio</h6>
+                <h2 class="display-5 fw-bold">Featured Projects</h2>
+            </div>
+            
+            <div class="swiper projectsSwiper">
+                <div class="swiper-wrapper" id="projectsSlider">
+                    <!-- Projects will be inserted here by JavaScript -->
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section id="why-choose-us" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h6 class="text-uppercase fw-bold text-amber mb-2">Our Advantages</h6>
+                <h2 class="display-5 fw-bold">Why Choose Us</h2>
+            </div>
+            <div class="row g-4" id="valuePropositions">
+                <!-- Value propositions will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Process -->
+    <section id="our-process" class="py-5 bg-dark text-white">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h6 class="text-uppercase fw-bold text-amber mb-2">How We Work</h6>
+                <h2 class="display-5 fw-bold">Our Streamlined Process</h2>
+            </div>
+            <div class="row g-4" id="processSteps">
+                <!-- Process steps will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Client Logos -->
+    <section id="client-logos" class="py-5 bg-light">
+        <div class="container">
+            <h3 class="text-center text-muted mb-5">Trusted by Government, Private Organizations & NGOs</h3>
+            <div class="d-flex flex-wrap justify-content-center align-items-center gap-4" id="clientLogos">
+                <!-- Client logos will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-dark text-light">
+        <div class="container py-5">
+            <div class="row g-4">
+                <!-- About -->
+                <div class="col-md-6 col-lg-3">
+                    <h3 class="h5 mb-3">
+                        <span class="brand-am">AM AWUNI</span><br>
+                        <span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                    </h3>
+                    <p class="small">Manufacturing quality furniture and providing affordable construction services with eco-friendly materials and flexible payment terms.</p>
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="#" class="btn btn-sm btn-secondary rounded-circle p-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                            </svg>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-secondary rounded-circle p-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                            </svg>
+                        </a>
+                        <a href="#" class="btn btn-sm btn-secondary rounded-circle p-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Quick Links</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{{ url_for('about') }}" class="text-light text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="{{ url_for('projects') }}" class="text-light text-decoration-none">Projects</a></li>
+                        <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Categories -->
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Our Services</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Sofa Sets</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Dining Tables</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Room Decorations</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Construction Services</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Contact Us</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2 d-flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 mt-1 flex-shrink-0">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span>Tuutingli, Second Ring Road, Near Dabokpa Technical Institute, Tamale, Ghana</span>
+                        </li>
+                        <li class="mb-2 d-flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 mt-1 flex-shrink-0">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                            <span>+233 538 833 723 / +233 248 962 214 (WhatsApp)</span>
+                        </li>
+                        <li class="mb-2 d-flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2 mt-1 flex-shrink-0">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            <span>amfurnitureandconstruction@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="bg-black py-3">
+            <div class="container text-center">
+                <p class="small text-muted mb-0">&copy; <span id="currentYear"></span> AM AWUNI FURNITURE & CONSTRUCTION. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- Data -->
+    <script src="{{ url_for('static', filename='js/data.js') }}"></script>
+    
+    <!-- Main App -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    <!-- Back to Top -->
+    <script src="{{ url_for('static', filename='js/back-to-top.js') }}"></script>
+</body>
+</html>

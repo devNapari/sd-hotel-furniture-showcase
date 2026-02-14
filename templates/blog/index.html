@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog & News - AM AWUNI FURNITURE & CONSTRUCTION</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="fixed-top">
+        <nav class="navbar navbar-expand-lg scrolled">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('shop') }}">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('projects') }}">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="{{ url_for('blog.index') }}">Blog</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('contact') }}">Contact</a></li>
+                        
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}"><i class="bi bi-person"></i> Profile</a></li>
+                                {% if not current_user.is_admin %}
+                                <li><a class="dropdown-item" href="{{ url_for('auth.orders') }}"><i class="bi bi-bag-check"></i> My Orders</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('auth.wishlist') }}"><i class="bi bi-heart"></i> Wishlist</a></li>
+                                {% endif %}
+                                {% if current_user.is_admin %}
+                                <li><a class="dropdown-item" href="/admin"><i class="bi bi-shield-lock"></i> Admin Panel</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.register') }}">Sign Up</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header bg-dark text-white py-5 mt-5">
+        <div class="container text-center py-5">
+            <h1 class="display-4 fw-bold mb-3">Blog & News</h1>
+            <p class="lead">Stay updated with the latest trends, tips, and news from the hospitality furniture industry</p>
+        </div>
+    </section>
+
+    <!-- Blog Content -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <!-- Search Bar -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <form action="{{ url_for('blog.search') }}" method="GET" class="d-flex">
+                                <input type="text" name="q" class="form-control me-2" placeholder="Search articles..." value="{{ search_query or '' }}">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-search"></i> Search
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Active Filters -->
+                    {% if current_category or search_query %}
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted">Active filters:</span>
+                            {% if current_category %}
+                            <span class="badge bg-primary">
+                                {{ current_category|title }}
+                                <a href="{{ url_for('blog.index') }}" class="text-white text-decoration-none ms-1">×</a>
+                            </span>
+                            {% endif %}
+                            {% if search_query %}
+                            <span class="badge bg-info">
+                                Search: "{{ search_query }}"
+                                <a href="{{ url_for('blog.index') }}" class="text-white text-decoration-none ms-1">×</a>
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Blog Posts Grid -->
+                    {% if posts %}
+                    <div class="row g-4">
+                        {% for post in posts %}
+                        <div class="col-md-6">
+                            <article class="card border-0 shadow-sm h-100">
+                                {% if post.featured_image %}
+                                <img src="{{ post.featured_image }}" class="card-img-top" alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+                                {% endif %}
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-amber text-dark">{{ post.category|title }}</span>
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock"></i> {{ post.reading_time }} min read
+                                        </small>
+                                    </div>
+                                    <h5 class="card-title">
+                                        <a href="{{ url_for('blog.detail', slug=post.slug) }}" class="text-decoration-none text-dark">
+                                            {{ post.title }}
+                                        </a>
+                                    </h5>
+                                    <p class="card-text text-muted small">{{ post.excerpt or post.content[:150] + '...' }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="bi bi-person"></i> {{ post.author.full_name }}
+                                        </small>
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar"></i> {{ post.published_at.strftime('%b %d, %Y') if post.published_at else 'N/A' }}
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white border-top-0">
+                                    <a href="{{ url_for('blog.detail', slug=post.slug) }}" class="btn btn-sm btn-outline-primary w-100">
+                                        Read More <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </article>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if pagination.pages > 1 %}
+                    <nav aria-label="Blog pagination" class="mt-5">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                                <a class="page-link" href="{{ url_for('blog.index', page=pagination.prev_num, category=current_category, search=search_query) if pagination.has_prev else '#' }}">
+                                    <i class="bi bi-chevron-left"></i> Previous
+                                </a>
+                            </li>
+                            
+                            {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                                {% if page_num %}
+                                    <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                                        <a class="page-link" href="{{ url_for('blog.index', page=page_num, category=current_category, search=search_query) }}">{{ page_num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                                <a class="page-link" href="{{ url_for('blog.index', page=pagination.next_num, category=current_category, search=search_query) if pagination.has_next else '#' }}">
+                                    Next <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                    {% endif %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-newspaper display-1 text-muted"></i>
+                        <h3 class="mt-4">No Articles Found</h3>
+                        <p class="text-muted">{% if search_query %}Try a different search term{% else %}Check back soon for new content{% endif %}</p>
+                        {% if current_category or search_query %}
+                        <a href="{{ url_for('blog.index') }}" class="btn btn-primary mt-3">View All Articles</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Featured Posts -->
+                    {% if featured_posts %}
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-amber text-dark">
+                            <h6 class="mb-0"><i class="bi bi-star-fill me-2"></i>Featured Articles</h6>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for post in featured_posts %}
+                            <a href="{{ url_for('blog.detail', slug=post.slug) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ post.title }}</h6>
+                                </div>
+                                <small class="text-muted">{{ post.published_at.strftime('%b %d, %Y') if post.published_at else 'N/A' }}</small>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Categories -->
+                    {% if categories %}
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h6 class="mb-0"><i class="bi bi-folder me-2"></i>Categories</h6>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for category, count in categories %}
+                            <a href="{{ url_for('blog.category', category=category) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                {{ category|title }}
+                                <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Recent Posts -->
+                    {% if recent_posts %}
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Articles</h6>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            {% for post in recent_posts %}
+                            <a href="{{ url_for('blog.detail', slug=post.slug) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <p class="mb-1 small">{{ post.title }}</p>
+                                </div>
+                                <small class="text-muted">{{ post.published_at.strftime('%b %d, %Y') if post.published_at else 'N/A' }}</small>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light">
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <h3 class="h5 mb-3">
+                        <span class="brand-am">AM AWUNI</span><br><span class="brand-furniture">FURNITURE</span> <span class="brand-construction">& CONSTRUCTION</span>
+                    </h3>
+                    <p class="small">Manufacturing quality furniture and providing affordable construction services with eco-friendly materials and flexible payment terms.</p>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Quick Links</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{{ url_for('about') }}" class="text-light text-decoration-none">About Us</a></li>
+                        <li class="mb-2"><a href="{{ url_for('projects') }}" class="text-light text-decoration-none">Projects</a></li>
+                        <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Categories</h4>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Sofa Sets</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Dining Tables</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Room Decorations</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Construction Services</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <h4 class="h6 mb-3">Contact Us</h4>
+                    <p class="small mb-1">Tuutingli, Second Ring Road</p>
+                    <p class="small mb-1">Near Dabokpa Technical Institute, Tamale</p>
+                    <p class="small mb-1">+233 538 833 723</p>
+                    <p class="small">amfurnitureandconstruction@gmail.com</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-black py-3">
+            <div class="container text-center">
+                <p class="small text-muted mb-0">&copy; <span id="currentYear"></span> AM AWUNI FURNITURE & CONSTRUCTION. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Back to Top -->
+    <script src="{{ url_for('static', filename='js/back-to-top.js') }}"></script>
+    
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

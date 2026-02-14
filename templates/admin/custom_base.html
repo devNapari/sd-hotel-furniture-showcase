@@ -1,0 +1,76 @@
+{% extends 'admin/base.html' %}
+
+{% block access_control %}
+<!-- Include Notifications Component -->
+{% include 'admin/notifications.html' %}
+
+<div class="navbar-text">
+    <div class="btn-group">
+        <button type="button" class="btn btn-sm btn-outline-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white;">
+            <i class="fa fa-user"></i> {{ current_user.username }}
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="{{ url_for('index') }}">
+                <i class="fa fa-home"></i> View Website
+            </a>
+            <a class="dropdown-item" href="{{ url_for('auth.profile') }}">
+                <i class="fa fa-user"></i> My Profile
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+                <i class="fa fa-sign-out"></i> Logout
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Admin dropdown button styling */
+    .btn-outline-light {
+        color: white !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+    }
+    
+    .btn-outline-light:hover,
+    .btn-outline-light:focus,
+    .btn-outline-light:active,
+    .btn-outline-light.show {
+        color: white !important;
+        background-color: #007bff !important;
+        border-color: #007bff !important;
+    }
+    
+    .btn-outline-light:not(:disabled):not(.disabled):active,
+    .btn-outline-light:not(:disabled):not(.disabled).active {
+        color: white !important;
+        background-color: #007bff !important;
+        border-color: #007bff !important;
+    }
+    
+    /* Dropdown menu items styling */
+    .dropdown-menu .dropdown-item {
+        color: #212529 !important;
+        transition: all 0.3s ease;
+    }
+    
+    .dropdown-menu .dropdown-item:hover,
+    .dropdown-menu .dropdown-item:focus {
+        background-color: #007bff !important;
+        color: white !important;
+    }
+    
+    .dropdown-menu .dropdown-item.text-danger {
+        color: #dc3545 !important;
+    }
+    
+    .dropdown-menu .dropdown-item.text-danger:hover,
+    .dropdown-menu .dropdown-item.text-danger:focus {
+        background-color: #007bff !important;
+        color: white !important;
+    }
+</style>
+
+<!-- Load Notifications JavaScript -->
+<script src="{{ url_for('static', filename='js/admin-notifications.js') }}"></script>
+
+{% endblock %}
